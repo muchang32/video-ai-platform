@@ -23,9 +23,11 @@ export function DetectionPanel({ result }: Props) {
               <span className="text-sm text-gray-800">{det.label}</span>
             </div>
             <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-              <span className="font-mono">
-                {formatSeconds(det.start_seconds)} - {formatSeconds(det.end_seconds)}
-              </span>
+              {det.start_seconds != null && det.end_seconds != null && (
+                <span className="font-mono">
+                  {formatSeconds(det.start_seconds)} - {formatSeconds(det.end_seconds)}
+                </span>
+              )}
               {det.confidence_score != null && (
                 <span>{(det.confidence_score * 100).toFixed(0)}%</span>
               )}

@@ -70,8 +70,8 @@ export interface SummarizationPayload {
 export interface Detection {
   detection_type: 'scene' | 'object' | 'landmark' | 'text_on_screen' | 'person'
   label: string
-  start_seconds: number
-  end_seconds: number
+  start_seconds?: number   // not always present (e.g. real API omits for non-temporal detections)
+  end_seconds?: number
   confidence_score?: number
   bounding_box?: null
 }
@@ -94,10 +94,11 @@ export interface MediaPreparationPayload {
 
 export interface MetadataFusionPayload {
   fused_fields: {
-    transcript?: TranscriptionPayload
-    tags?: Tag[]
-    detections?: Detection[]
-    summary?: string
+    // Backend returns aggregated summaries, not full payloads — use individual job results for display
+    transcript?: { excerpt: string; segment_count: number; language_codes: string[] }
+    tags?: { by_category: Record<string, string[]>; total_unique_labels: number; low_confidence: boolean }
+    detections?: { top_labels: string[]; counts_by_type: Record<string, number>; low_confidence: boolean }
+    summary?: { items: Array<{ summary_text: string; language_code: string }> }
   }
   source_result_ids: string[]
   fusion_strategy: string

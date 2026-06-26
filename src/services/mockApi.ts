@@ -222,10 +222,10 @@ const MOCK_MEDIA: MediaPreparationPayload = {
 
 const MOCK_FUSION: MetadataFusionPayload = {
   fused_fields: {
-    transcript: MOCK_TRANSCRIPTION,
-    tags: MOCK_TAGS.tags,
-    detections: MOCK_DETECTION.detections,
-    summary: MOCK_SUMMARY.summary_text,
+    transcript: { excerpt: MOCK_TRANSCRIPTION.segments[0]?.text ?? '', segment_count: MOCK_TRANSCRIPTION.segments.length, language_codes: [MOCK_TRANSCRIPTION.language_code] },
+    tags: { by_category: { KEYWORD: MOCK_TAGS.tags.map((t) => t.label) }, total_unique_labels: MOCK_TAGS.tags.length, low_confidence: false },
+    detections: { top_labels: MOCK_DETECTION.detections.slice(0, 5).map((d) => d.label), counts_by_type: { scene: 1, object: 3, person: 2, text_on_screen: 4 }, low_confidence: false },
+    summary: { items: [{ summary_text: MOCK_SUMMARY.summary_text, language_code: MOCK_SUMMARY.language_code }] },
   },
   source_result_ids: ['mock-media-id', 'mock-transcription-id', 'mock-tag-id', 'mock-summary-id', 'mock-detection-id'],
   fusion_strategy: 'default',

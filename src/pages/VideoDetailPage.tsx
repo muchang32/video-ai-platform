@@ -14,7 +14,7 @@ import {
 import { LoadingSpinner } from '../components/ui/LoadingSpinner'
 import type {
   TranscriptionPayload, TagExtractionPayload, SummarizationPayload,
-  DetectionPayload, MetadataFusionPayload, Tag, Detection,
+  DetectionPayload, Tag, Detection,
 } from '../types/api.types'
 
 type Tab = 'transcript' | 'info'
@@ -45,13 +45,14 @@ export function VideoDetailPage() {
   const statusConfig = ANALYSIS_STATUS_CONFIG[video.analysisStatus]
   const isProcessing = video.analysisStatus === 'PROCESSING' || video.analysisStatus === 'PENDING'
 
-  // Resolve display data: fusion > individual
-  const fusion = results.fusion?.payload as MetadataFusionPayload | undefined
-  const transcript = fusion?.fused_fields.transcript ?? results.transcription?.payload as TranscriptionPayload | undefined
-  const tags = (fusion?.fused_fields.tags ?? (results.tags?.payload as TagExtractionPayload | undefined)?.tags) ?? []
-  const summary = fusion?.fused_fields.summary ?? (results.summary?.payload as SummarizationPayload | undefined)?.summary_text
-  const detections = (fusion?.fused_fields.detections ?? (results.detection?.payload as DetectionPayload | undefined)?.detections) ?? []
-  const mediaDuration = results.media?.payload.media_duration_s ?? video.duration
+  // Resolve display data from individual job results
+  // (METADATA_FUSION returns aggregated summaries, not full payloads)
+  const transcript = results.transcription?.payload as TranscriptionPayload | undefined
+  const tags = (results.tags?.payload as TagExtractionPayload | undefined)?.tags ?? []
+  const summary = (results.summary?.payload as SummarizationPayload | undefined)?.summary_text
+  const detections = (results.detection?.payload as DetectionPayload | undefined)?.detections ?? []
+  const mediaDurationRaw = results.media?.payload.media_duration_s
+  const mediaDuration = (mediaDurationRaw != null && mediaDurationRaw > 0) ? mediaDurationRaw : video.duration
 
   const hasTranscript = transcript && transcript.segments.length > 0
   const hasInfo = summary || tags.length > 0 || detections.length > 0
@@ -351,7 +352,9 @@ function InfoTabView({
                   <span className="text-sm text-gray-800">{det.label}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
-                  <span className="font-mono">{formatSeconds(det.start_seconds)} - {formatSeconds(det.end_seconds)}</span>
+                  {det.start_seconds != null && det.end_seconds != null && (
+                    <span className="font-mono">{formatSeconds(det.start_seconds)} - {formatSeconds(det.end_seconds)}</span>
+                  )}
                   {det.confidence_score != null && <span>{(det.confidence_score * 100).toFixed(0)}%</span>}
                 </div>
               </div>

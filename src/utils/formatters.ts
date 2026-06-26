@@ -60,11 +60,12 @@ export const JOB_LABELS: Record<JobType, string> = {
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  topic: '主題',
-  keyword: '關鍵詞',
-  location: '地名',
-  person: '人名',
-  org: '組織',
+  topic: '主題',    TOPIC: '主題',
+  keyword: '關鍵詞', KEYWORD: '關鍵詞',
+  location: '地名',  LOCATION: '地名',
+  person: '人名',   PERSON: '人名',
+  org: '組織',      ORG: '組織',
+  entity: '實體',   ENTITY: '實體',
 }
 
 export const DETECTION_TYPE_LABELS: Record<string, string> = {
