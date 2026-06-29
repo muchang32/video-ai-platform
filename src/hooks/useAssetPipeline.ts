@@ -21,12 +21,13 @@ export function useAssetPipeline() {
 
     setState({ phase: 'uploading', progress: 0, error: null })
 
-    // Derive a filename-based hint for the backend (not user-facing)
-    const filenameStem = file.name.replace(/\.[^.]+$/, '')
+    // Use a safe ASCII-only ID for the backend — Chinese filenames break
+    // the backend's audio extraction step when used as a temp file name.
+    const safeId = `vap_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 
     try {
       // 1. Register — API returns platform_id which becomes our primary key
-      const asset = await registerAsset(filenameStem, currentUser.email)
+      const asset = await registerAsset(safeId, currentUser.email)
 
       // 2. Upload
       if (asset.status !== 'READY') {
