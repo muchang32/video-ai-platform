@@ -37,7 +37,7 @@ export async function captureVideoThumbnail(file: File): Promise<string | null> 
     video.preload = 'metadata'
 
     video.onloadedmetadata = () => {
-      video.currentTime = video.duration > 6 ? 6 : video.duration / 2
+      video.currentTime = video.duration > 4 ? 4 : video.duration / 2
     }
     video.onseeked = capture
     video.onerror = () => done(null)

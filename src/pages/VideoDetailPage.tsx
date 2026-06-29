@@ -70,10 +70,18 @@ export function VideoDetailPage() {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="flex flex-col sm:flex-row">
           {/* Thumbnail */}
-          <div className="sm:w-2/5 bg-gray-900 relative aspect-video sm:aspect-auto flex items-center justify-center">
-            <svg className="w-20 h-20 text-white/20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
-            </svg>
+          <div className="sm:w-2/5 bg-gray-900 relative aspect-video sm:aspect-auto flex items-center justify-center overflow-hidden">
+            {video.thumbnailUrl ? (
+              <img
+                src={video.thumbnailUrl}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <svg className="w-20 h-20 text-white/20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
             {mediaDuration != null && (
               <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-0.5 rounded font-mono">
                 {formatDuration(mediaDuration)}
