@@ -30,8 +30,10 @@ export async function uploadAsset(
   file: File,
   onProgress: (pct: number) => void
 ): Promise<Asset> {
+  const ext = file.name.match(/\.[^.]+$/)?.[0] ?? ''
+  const safeFileName = `upload_${platformId}${ext}`
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', file, safeFileName)
 
   const res = await client.post<Asset>(`/assets/${platformId}/upload`, formData, {
     timeout: 0,
