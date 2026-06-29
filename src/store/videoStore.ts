@@ -18,6 +18,7 @@ export interface VideoRecord {
   analysisCompletedAt: string | null
   failureReason: string | null
   duration: number | null  // seconds, filled in after MEDIA_PREPARATION
+  thumbnailUrl: string | null
 }
 
 const STORAGE_KEY = 'vap_videos'

@@ -52,11 +52,19 @@ function VideoCard({ video }: { video: VideoRecord }) {
       <Link to={`/videos/${encodeURIComponent(video.cmsId)}`} className="block group">
         {/* Thumbnail */}
         <div className="relative aspect-video bg-gray-900 overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <svg className="w-14 h-14 text-white/20 group-hover:text-white/30 transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
+          {video.thumbnailUrl ? (
+            <img
+              src={video.thumbnailUrl}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg className="w-14 h-14 text-white/20 group-hover:text-white/30 transition-colors" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          )}
           {video.duration != null && (
             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded font-mono">
               {formatDuration(video.duration)}

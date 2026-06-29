@@ -3,6 +3,7 @@ import { useVideoStore } from '../store/videoStore'
 import { useUserStore } from '../store/userStore'
 import { registerAsset, uploadAsset, enrichAsset } from '../services/index'
 import { getVideoFormat } from '../utils/formatters'
+import { captureVideoThumbnail } from '../utils/captureVideoThumbnail'
 import axios from 'axios'
 
 interface UploadState {
@@ -24,6 +25,9 @@ export function useAssetPipeline() {
     // Use a safe ASCII-only ID for the backend — Chinese filenames break
     // the backend's audio extraction step when used as a temp file name.
     const safeId = `vap_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+    // Capture thumbnail in parallel with the first API call (non-blocking)
+    const thumbnailPromise = captureVideoThumbnail(file)
 
     try {
       // 1. Register — API returns platform_id which becomes our primary key
@@ -52,6 +56,7 @@ export function useAssetPipeline() {
       // 4. Save to video library — use platform_id as the canonical identifier
       const now = new Date().toISOString()
       const videoId = asset.platform_id
+      const thumbnailUrl = await thumbnailPromise
       videoStore.addVideo({
         cmsId: videoId,
         platformId: videoId,
@@ -68,6 +73,7 @@ export function useAssetPipeline() {
         analysisCompletedAt: null,
         failureReason: null,
         duration: null,
+        thumbnailUrl,
       })
 
       // Save batchId to localStorage for polling resume
