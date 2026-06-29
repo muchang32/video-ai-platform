@@ -65,7 +65,7 @@ function VideoCard({ video }: { video: VideoRecord }) {
               </svg>
             </div>
           )}
-          {video.duration != null && (
+          {video.duration != null && video.duration > 0 && (
             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded font-mono">
               {formatDuration(video.duration)}
             </div>

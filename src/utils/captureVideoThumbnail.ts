@@ -1,10 +1,15 @@
-export async function captureVideoThumbnail(file: File): Promise<string | null> {
+interface CaptureResult {
+  thumbnailUrl: string | null
+  duration: number | null
+}
+
+export async function captureVideoThumbnail(file: File): Promise<CaptureResult> {
   return new Promise((resolve) => {
     const video = document.createElement('video')
     const url = URL.createObjectURL(file)
     let settled = false
 
-    const done = (result: string | null) => {
+    const done = (result: CaptureResult) => {
       if (settled) return
       settled = true
       URL.revokeObjectURL(url)
@@ -12,24 +17,27 @@ export async function captureVideoThumbnail(file: File): Promise<string | null> 
     }
 
     const capture = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = 320
-      canvas.height = 180
-      const ctx = canvas.getContext('2d')
-      if (!ctx) { done(null); return }
+      const duration = isFinite(video.duration) && video.duration > 0 ? video.duration : null
 
-      // Center-crop to 16:9
+      const canvas = document.createElement('canvas')
+      canvas.width = 640
+      canvas.height = 360
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { done({ thumbnailUrl: null, duration }); return }
+
       const vw = video.videoWidth
       const vh = video.videoHeight
-      if (!vw || !vh) { done(null); return }
+      if (!vw || !vh) { done({ thumbnailUrl: null, duration }); return }
+
+      // Center-crop to 16:9
       const vAspect = vw / vh
-      const cAspect = 320 / 180
+      const cAspect = 640 / 360
       let sx = 0, sy = 0, sw = vw, sh = vh
       if (vAspect > cAspect) { sw = vh * cAspect; sx = (vw - sw) / 2 }
       else { sh = vw / cAspect; sy = (vh - sh) / 2 }
 
-      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 320, 180)
-      done(canvas.toDataURL('image/jpeg', 0.75))
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 640, 360)
+      done({ thumbnailUrl: canvas.toDataURL('image/jpeg', 0.8), duration })
     }
 
     video.muted = true
@@ -40,10 +48,9 @@ export async function captureVideoThumbnail(file: File): Promise<string | null> 
       video.currentTime = video.duration > 4 ? 4 : video.duration / 2
     }
     video.onseeked = capture
-    video.onerror = () => done(null)
+    video.onerror = () => done({ thumbnailUrl: null, duration: null })
 
-    // Fallback: give up after 8s
-    setTimeout(() => done(null), 8000)
+    setTimeout(() => done({ thumbnailUrl: null, duration: null }), 8000)
 
     video.src = url
   })

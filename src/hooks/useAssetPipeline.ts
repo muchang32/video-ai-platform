@@ -56,7 +56,7 @@ export function useAssetPipeline() {
       // 4. Save to video library — use platform_id as the canonical identifier
       const now = new Date().toISOString()
       const videoId = asset.platform_id
-      const thumbnailUrl = await thumbnailPromise
+      const { thumbnailUrl, duration } = await thumbnailPromise
       videoStore.addVideo({
         cmsId: videoId,
         platformId: videoId,
@@ -72,7 +72,7 @@ export function useAssetPipeline() {
         analysisStartedAt: now,
         analysisCompletedAt: null,
         failureReason: null,
-        duration: null,
+        duration,
         thumbnailUrl,
       })
 

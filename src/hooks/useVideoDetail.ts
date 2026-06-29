@@ -56,7 +56,7 @@ export function useVideoDetail(cmsId: string) {
 
       // Update duration if MEDIA_PREPARATION is available
       const duration = (fetched.media ?? results.media)?.payload.media_duration_s ?? null
-      if (duration != null) updateVideo(cmsId, { duration })
+      if (duration != null && duration > 0) updateVideo(cmsId, { duration })
 
       didFetchRef.current = true
     } catch {
