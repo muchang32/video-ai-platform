@@ -10,6 +10,7 @@ import {
   CATEGORY_LABELS,
   DETECTION_TYPE_LABELS,
   formatSeconds,
+  ERROR_CATEGORY_LABELS,
 } from '../utils/formatters'
 import { LoadingSpinner } from '../components/ui/LoadingSpinner'
 import type {
@@ -129,7 +130,7 @@ export function VideoDetailPage() {
             {/* Failure reason */}
             {video.failureReason && (
               <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-                失敗原因：{video.failureReason}
+                失敗原因：{ERROR_CATEGORY_LABELS[video.failureReason ?? ''] ?? video.failureReason}
               </div>
             )}
 
